@@ -47,7 +47,7 @@ public class SocialDataController {
 		}
 
 		for (TweetData tweet : response) {
-			System.out.println("##Language of tweet : " + tweet.getLanguage());
+			System.out.println("##Language of tweet : " + tweet.getLanguage());	//added language restrictions
 			if (tweet.getLanguage().equalsIgnoreCase("en"))
 				;
 			list.add(tweet.getTweet());
