@@ -55,7 +55,7 @@ public class SocialDataController {
 		TwitterRequestBean twitterRequestBean = new TwitterRequestBean();
 		twitterRequestBean.setTwitterDataList(list);
 		HttpEntity<TwitterRequestBean> entity = new HttpEntity<TwitterRequestBean>(twitterRequestBean);
-		String url = "http://192.168.1.11:8090/google-semantic/home";
+		String url = "http://192.168.1.11:8090/google-semantic/home";	//need to encrypt
 
 		ResponseEntity<SentimentWrapperResponse> result = restTemplate.exchange(url, HttpMethod.POST, entity,
 				SentimentWrapperResponse.class);
