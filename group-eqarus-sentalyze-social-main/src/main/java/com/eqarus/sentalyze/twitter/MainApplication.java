@@ -15,10 +15,10 @@ import java.util.Set;
 
 public class MainApplication {
 
-    private static TweetsManager tweetsManager = new TweetsManager("***OAuthConsumerKey***"
-            , "***OAuthConsumerSecret***"
-            , "***OAuthAccessToken***"
-            , "***OAuthAccessTokenSecret***");
+    private static TweetsManager tweetsManager = new TweetsManager("KMho7wQkiqtOXbBk2hImewXA9"
+            , "XN6afZwqAmJC2kaUxxd9E9IlnrSFiBazo6m77bfHAVpxKNBpCN"
+            , "3322466742-ng0ppcCkvwgHeJIgqab6wLDYt77GPgVBKVabETH"
+            , "DpfHxzmMN5pWZkCHlRuxn9ozGt5syXf4vW0YPbThpgcBO");
     
     private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -45,11 +45,10 @@ public class MainApplication {
             //    and 4 = very positive.
             sentiments = new ArrayList<>();
             for (Status status : statuses) {
-            	
             	TweetData tweet = new TweetData();
                 //TweetWithSentiment tweetWithSentiment = sentimentAnalyzer.findSentiment(status.getText());
                 if (status != null ) {
-                	tweet.setTweet((null == status.getText()? "No text":status.getText()));
+                	tweet.setTweet((null == status? "No text":status.getText()));
                     tweet.setPlace((status.getPlace() == null)? "Mordor":status.getPlace().getCountry());
                     tweet.setUser((status.getUser()==null)? "Sodang":status.getUser().getName());
                     tweet.setHashtags((status.getHashtagEntities()==null)?"Badhia Hashtag" : (status.getHashtagEntities().length>0)? status.getHashtagEntities()[0].getText():"Badhiya Hashtag");

@@ -20,6 +20,7 @@ public class TweetsManager {
         cb.setOAuthConsumerSecret(OAuthConsumerSecret);
         cb.setOAuthAccessToken(OAuthAccessToken);
         cb.setOAuthAccessTokenSecret(OAuthAccessTokenSecret);
+        cb.setTweetModeExtended(true);
         twitter = new TwitterFactory(cb.build()).getInstance();
     }
 
