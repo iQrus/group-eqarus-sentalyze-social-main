@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import com.eqarus.sentalyze.request.TwitterRequestBean;
 import com.eqarus.sentalyze.twitter.MainApplication;
 import com.eqarus.sentalyze.twitter.configs.TweetData;
+import com.equarus.sentalyze.response.SentimentResponseBean;
 import com.equarus.sentalyze.response.SentimentWrapperResponse;
 
 @RestController
@@ -24,7 +26,8 @@ public class SocialDataController {
 	private RestTemplate restTemplate;
 
 	private final MainApplication appService = new MainApplication();
-
+	
+	@CrossOrigin(origins = "*")
 	@RequestMapping("/getSentiments")
 	public SentimentWrapperResponse getSentiments(
 			@RequestParam(value = "keyword", defaultValue = "Article370") String keyword) {
@@ -41,21 +44,16 @@ public class SocialDataController {
 		}
 		System.out.println("Response :"+response.toString());
 		for (TweetData tweet : response) {
-			System.out.println("##Language of tweet : " + tweet.getLanguage()); // added language restrictions
-			if (tweet.getLanguage().equalsIgnoreCase("en"))
-				;
 			list.add(tweet.getTweet());
 		}
 		TwitterRequestBean twitterRequestBean = new TwitterRequestBean();
 		twitterRequestBean.setTwitterDataList(list);
 		HttpEntity<TwitterRequestBean> entity = new HttpEntity<TwitterRequestBean>(twitterRequestBean);
-		String url = "http://192.168.1.11:8090/google-semantic/home"; // need to encrypt
+		String url = "http://localhost:8080/google-semantic/home"; // need to encrypt
 
 		ResponseEntity<SentimentWrapperResponse> result = restTemplate.exchange(url, HttpMethod.POST, entity,
 				SentimentWrapperResponse.class);
 		SentimentWrapperResponse sentimentWrapperResponse = result.getBody();
-
-		System.out.println("####Response from Nandan####" + sentimentWrapperResponse.getSentimentResponseMap());
 
 		return sentimentWrapperResponse;
 	}
