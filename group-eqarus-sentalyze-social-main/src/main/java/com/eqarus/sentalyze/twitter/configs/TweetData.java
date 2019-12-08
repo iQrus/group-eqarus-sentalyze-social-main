@@ -1,5 +1,7 @@
 package com.eqarus.sentalyze.twitter.configs;
 
+import twitter4j.Place;
+
 public class TweetData {
 
 	private String tweet;
@@ -7,6 +9,7 @@ public class TweetData {
 	private String user;
 	private String hashtags;
 	private String language;
+	private Place location;
 	public TweetData() {
 		// TODO Auto-generated constructor stub
 	}
@@ -53,8 +56,16 @@ public class TweetData {
 	public void setLanguage(String language) {
 		this.language = language;
 	}
-	
-	
+
+
+	public Place getLocation() {
+		return location;
+	}
+
+
+	public void setLocation(Place location) {
+		this.location = location;
+	}
 	
 	
 }

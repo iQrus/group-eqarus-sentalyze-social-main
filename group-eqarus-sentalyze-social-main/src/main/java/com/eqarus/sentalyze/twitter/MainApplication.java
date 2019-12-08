@@ -5,6 +5,9 @@ import com.eqarus.sentalyze.twitter.configs.TweetData;
 import com.eqarus.sentalyze.twitter.configs.TweetsManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import twitter4j.GeoLocation;
+import twitter4j.RateLimitStatus;
 import twitter4j.Status;
 
 import java.io.IOException;
@@ -53,6 +56,15 @@ public class MainApplication {
                     tweet.setUser((status.getUser()==null)? "Sodang":status.getUser().getName());
                     tweet.setHashtags((status.getHashtagEntities()==null)?"Badhia Hashtag" : (status.getHashtagEntities().length>0)? status.getHashtagEntities()[0].getText():"Badhiya Hashtag");
                     tweet.setLanguage(status.getLang());
+                    
+                    if(!tweet.getPlace().equalsIgnoreCase("Mordor")) {                    	
+                    	tweet.setLocation(status.getPlace());
+                    }
+                    else {
+                    	if(!status.getUser().getLocation().isEmpty())
+                    		System.out.println(status.getUser().getLocation());
+                    	tweet.setLocation(null);
+                    }
                     sentiments.add(tweet);
                 }
             }
