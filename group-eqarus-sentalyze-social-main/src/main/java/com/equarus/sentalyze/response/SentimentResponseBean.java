@@ -1,11 +1,16 @@
 package com.equarus.sentalyze.response;
 
+import twitter4j.GeoLocation;
+
 public class SentimentResponseBean {
 	
 	private float magnitude;
 	private float score;
 	private String text;
 	private String category;
+	private double latitude;
+	private double longitude;
+	private int sentimentScore;
 
 	public float getMagnitude() {
 		return magnitude;
@@ -38,5 +43,30 @@ public class SentimentResponseBean {
 	public void setCategory(String category) {
 		this.category = category;
 	}
+
+	public double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
+
+	public double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
+	}
+
+	public int getSentimentScore() {
+		return sentimentScore;
+	}
+
+	public void setSentimentScore(int sentimentScore) {
+		this.sentimentScore = sentimentScore;
+	}
+
 
 }
