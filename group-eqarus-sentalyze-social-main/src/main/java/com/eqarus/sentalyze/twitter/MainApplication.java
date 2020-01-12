@@ -1,8 +1,11 @@
 package com.eqarus.sentalyze.twitter;
 
 
+import com.eqarus.sentalyze.model.RedditData;
 import com.eqarus.sentalyze.twitter.configs.TweetData;
 import com.eqarus.sentalyze.twitter.configs.TweetsManager;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -12,9 +15,21 @@ import twitter4j.Status;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 public class MainApplication {
 
@@ -72,4 +87,59 @@ public class MainApplication {
         }
         return sentiments;
     }
+    private String getAuthToken(RestTemplate restTemplate) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setBasicAuth("lKo6fF37TJKUcg", "U2-WfN4X31ADgMPLSssNdycxNho");
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		headers.put("User-Agent", Collections
+				.singletonList("tomcat:com.sentalyze.s3-website.ap-south-1.amazonaws.senti:v1.0 (by /u/BandiQ21)"));
+		String body = "grant_type=client_credentials";
+		HttpEntity<String> request = new HttpEntity<>(body, headers);
+		String authUrl = "https://www.reddit.com/api/v1/access_token";
+		ResponseEntity<String> response = restTemplate.postForEntity(authUrl, request, String.class);
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> map = new HashMap<>();
+		try {
+			map.putAll(mapper.readValue(response.getBody(), new TypeReference<Map<String, Object>>() {
+			}));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println(response.getBody());
+		return String.valueOf(map.get("access_token"));
+	}
+
+	public String readArticles(String keyword, RestTemplate restTemplate) {
+		HttpHeaders headers = new HttpHeaders();
+		String authToken = getAuthToken(restTemplate);
+		headers.setBearerAuth(authToken);
+		headers.put("User-Agent", Collections
+				.singletonList("tomcat:com.sentalyze.s3-website.ap-south-1.amazonaws.senti:v1.0 (by /u/BandiQ21)"));
+		HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
+		// String url = "https://oauth.reddit.com/r/India/hot";
+		// String url = "https://oauth.reddit.com/r/India/about";
+		String url = "https://oauth.reddit.com/search/?q=" + keyword + "&type=link&sort=new&limit=100";
+		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+		return response.getBody();
+	}
+
+	public List<RedditData> redditPostExtraction(String keyword, RestTemplate restTemplate) {
+		JSONObject obj = new JSONObject(readArticles(keyword, restTemplate));
+		List<RedditData> redditList = new ArrayList<RedditData>();
+		JSONObject obj1 = obj.getJSONObject("data");
+
+		JSONArray arr = obj1.getJSONArray("children");
+		for (int i = 0; i < arr.length(); i++) {
+
+			JSONObject obj2 = arr.getJSONObject(i).getJSONObject("data");
+			RedditData rd = new RedditData();
+			rd.setSubreddit(obj2.getString("subreddit") == null ? "" : obj2.getString("subreddit"));
+			rd.setSelftext(obj2.getString("selftext") == null ? "" : obj2.getString("selftext"));
+			rd.setTitle(obj2.getString("title") == null ? "" : obj2.getString("title"));
+			redditList.add(rd);
+		}
+		return redditList;
+	}
+
+    
 }
